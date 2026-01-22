@@ -1,7 +1,6 @@
 import type { Request, Response } from "express"
 import { urlSchema } from "../validators/zod.js"
 import { createUrl } from "../service/createUrl.js"
-import { success } from "zod"
 import { getLongUrl } from "../service/getLongUrl.js"
 
 export const createShortUrl = async (req: Request, res: Response) => {
