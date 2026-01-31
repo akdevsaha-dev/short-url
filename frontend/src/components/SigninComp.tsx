@@ -34,7 +34,7 @@ export const SigninComp = () => {
     }
     const success = await signin({ email, password });
     if (success) {
-      navigate("/blogs");
+      navigate("/dashboard");
     }
   };
   return (

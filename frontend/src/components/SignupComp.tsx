@@ -35,7 +35,7 @@ export const SignupComp = () => {
     }
     const success = await signup({ email, password });
     if (success) {
-      navigate("/blogs");
+      navigate("/dashboard");
     }
   };
   return (
