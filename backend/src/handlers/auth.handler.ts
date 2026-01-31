@@ -103,3 +103,19 @@ export const signOut = (req: Request, res: Response) => {
     })
     res.status(200).json({ success: true, message: "Signed out successfully" })
 }
+
+export const status = (req: Request, res: Response) => {
+    const id = req.user?.id;
+
+    if (!id) {
+        return res.status(401).json({
+            success: false,
+            error: "Unauthorized"
+        });
+    }
+
+    return res.status(200).json({
+        success: true,
+        user: req.user
+    });
+};
