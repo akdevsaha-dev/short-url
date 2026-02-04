@@ -13,9 +13,7 @@ export const createUrl = async ({ url, userId }: { url: string, userId: string |
             shortUrl: existing.shortUrl,
         }
     }
-
     const shortCode = generateShortCode(url)
-
     const newUrl = await prisma.url.create({
         data: {
             originalUrl: url,

@@ -2,6 +2,8 @@ import type { Request, Response } from "express"
 import { urlSchema } from "../validators/zod.js"
 import { createUrl } from "../service/createUrl.js"
 import { getLongUrl } from "../service/getLongUrl.js"
+import { prisma } from "../lib/prisma.js"
+import { redis } from "../lib/redis.js"
 
 export const createShortUrl = async (req: Request, res: Response) => {
     try {
@@ -11,6 +13,7 @@ export const createShortUrl = async (req: Request, res: Response) => {
         }
         const userId = req.user?.id ?? null
         const getUrl = await createUrl({ url, userId })
+        await redis.del(`url:${userId}`)
         return res.status(201).json({
             success: true,
             url: getUrl.shortUrl
@@ -23,27 +26,35 @@ export const createShortUrl = async (req: Request, res: Response) => {
     }
 }
 
-export const redirectToSite = async (req: Request, res: Response) => {
+
+export const getUrls = async (req: Request, res: Response) => {
     try {
-        const { shortUrl } = req.params;
-        if (!shortUrl || typeof shortUrl !== "string") {
-            return res.status(400).json({ error: "Invalid short code" });
-        }
-        if (!shortUrl) {
-            return res.status(400).json({
+        const userId = req.user?.id
+        if (!userId) {
+            return res.status(401).json({
                 success: false,
-                error: "Invalid"
+                error: "Can't load url"
             })
         }
-        const longUrl = await getLongUrl(shortUrl)
-        return res.redirect(302, longUrl)
-    } catch (error: unknown) {
-        if (error instanceof Error && error.message === "Short URL not found") {
-            return res.status(404).json({
-                success: false,
-                error: "URL not found",
-            });
+        const cachedKey = `urls:${userId}`
+        const cached = await redis.get(cachedKey)
+        if (cached) {
+            return res.status(200).json({
+                success: true,
+                url: JSON.parse(cached)
+            })
         }
+        const url = await prisma.url.findMany({
+            where: {
+                userId
+            }
+        })
+        await redis.set(cachedKey, JSON.stringify(url), { EX: 300 })
+        return res.status(200).json({
+            success: true,
+            url
+        })
+    } catch (error: unknown) {
         return res.status(500).json({
             success: false,
             error: "Internal server error",
