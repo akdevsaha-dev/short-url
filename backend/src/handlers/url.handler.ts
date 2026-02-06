@@ -1,7 +1,6 @@
 import type { Request, Response } from "express"
 import { urlSchema } from "../validators/zod.js"
 import { createUrl } from "../service/createUrl.js"
-import { getLongUrl } from "../service/getLongUrl.js"
 import { prisma } from "../lib/prisma.js"
 import { redis } from "../lib/redis.js"
 
@@ -13,7 +12,7 @@ export const createShortUrl = async (req: Request, res: Response) => {
         }
         const userId = req.user?.id ?? null
         const getUrl = await createUrl({ url, userId })
-        await redis.del(`url:${userId}`)
+        await redis.del(`urls:${userId}`)
         return res.status(201).json({
             success: true,
             url: getUrl.shortUrl
