@@ -28,7 +28,7 @@ model Url {
   shortUrl    String   @unique
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  clicks      Int?
+  clicks      Int?     @default(0)
   userId      String?
   createdBy   User?    @relation(fields: [userId], references: [id])
 }

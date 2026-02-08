@@ -1,10 +1,11 @@
 import { Worker } from "bullmq";
-import { redis } from "../lib/redis.js";
+import { redis, connectRedis } from "../lib/redis.js";
 import { prisma } from "../lib/prisma.js";
 
+await connectRedis();
 
 new Worker("click-analytics", async job => {
-
+    console.log("JOB RECEIVED:", job.name, job.data);
     if (job.name === "track-click") {
         const { shortUrl } = job.data
         await redis.incr(`clicks:${shortUrl}`)
