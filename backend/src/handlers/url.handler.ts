@@ -48,7 +48,7 @@ export const getUrls = async (req: Request, res: Response) => {
                 userId
             }
         })
-await redis.set(cachedKey, JSON.stringify(url), { EX: 60 })
+        await redis.set(cachedKey, JSON.stringify(url), { EX: 60 })
         return res.status(200).json({
             success: true,
             url
