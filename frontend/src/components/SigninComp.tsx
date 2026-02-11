@@ -20,11 +20,13 @@ export const SigninComp = () => {
       setAgree(true);
     }
   }, []);
-  if (agree) {
-    localStorage.setItem("remember_email", email);
-  } else {
-    localStorage.removeItem("remember_email");
-  }
+  useEffect(() => {
+    if (agree && email) {
+      localStorage.setItem("remember_email", email);
+    } else {
+      localStorage.removeItem("remember_email");
+    }
+  }, [agree, email]);
   const signin = useAuthStore((state) => state.signin);
   const loading = useAuthStore((state) => state.isSigningIn);
   const handleSubmit = async () => {

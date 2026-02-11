@@ -75,7 +75,6 @@ export const useAuthStore = create<authStore>((set) => ({
         try {
             await axiosInstance.post("/auth/signout")
             set({ user: null })
-
         } catch (err: unknown) {
             if (axios.isAxiosError(err)) {
                 const message = err.response?.data.error || "Something went wrong";

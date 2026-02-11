@@ -34,7 +34,7 @@ export const Navbar = () => {
           {user ? (
             <button
               onClick={handleSignout}
-              className="rounded-lg bg-black px-4 py-2 text-sm text-white"
+              className="rounded-lg hover:bg-neutral-200 px-4 py-2 text-sm text-black hover:cursor-pointer"
             >
               Log out
             </button>
